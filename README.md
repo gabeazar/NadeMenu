@@ -42,15 +42,8 @@ Plugin name: `NadeMenu`
 
 ## Installation
 
-1. **Build or download** the plugin DLL:
-   - If building from source:
-     ```bash
-     dotnet build -c Release
-     ```
-   - The compiled DLL will be in `bin/Release/netX.Y/`.
-
-2. **Copy plugin**:
-   - Place the compiled `NadeMenu.dll` into:
+1. **Copy plugin**:
+   - Place the `NadeMenu.dll` into:
      ```text
      csgo/addons/counterstrikesharp/plugins/NadeMenu/
      ```
@@ -59,14 +52,14 @@ Plugin name: `NadeMenu`
      csgo/addons/counterstrikesharp/plugins/NadeMenu/NadeMenu.dll
      ```
 
-3. **Configuration file**:
+2. **Configuration file**:
    - On first run, CounterStrikeSharp will generate:
      ```text
      csgo/addons/counterstrikesharp/configs/plugins/NadeMenu/NadeMenu.json
      ```
    - Edit this file to change options (see **Configuration** below).
 
-4. **Restart the server** (or reload CounterStrikeSharp) for changes to apply.
+3. **Restart the server** (or reload CounterStrikeSharp) for changes to apply.
 
 ---
 
