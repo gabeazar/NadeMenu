@@ -285,5 +285,3 @@ When saving, NadeMenu always writes to the "default" group (safe and predictable
 - **Saved nades not appearing**: Make sure you are on the same map you saved them on. Check `UseMatchZy` setting and correct JSON path. Verify the JSON at `savednades.json` is valid (no syntax errors).
 
 - **Teleport is wrong angle**: Make sure you are using the latest version: NadeMenu now saves `EyeAngles`, not entity rotation. Re‑save the lineup; new saves will use your exact aim direction.
-
-```
