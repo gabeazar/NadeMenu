@@ -36,12 +36,12 @@ Plugin name: `NadeMenu`
 ## Requirements
 
 - **CounterStrikeSharp** (latest stable)
-- **CS2 Server**
+- **A running CS2 server** (latest update)
 ---
 
 ## Installation
 
-1. **Copy plugin**:
+1. **Place plugin**:
    - Place the `NadeMenu.dll` into:
      ```text
      csgo/addons/counterstrikesharp/plugins/NadeMenu/
