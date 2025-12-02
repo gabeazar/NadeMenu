@@ -36,8 +36,7 @@ Plugin name: `NadeMenu`
 ## Requirements
 
 - **CounterStrikeSharp** (latest stable)
-- **.NET** runtime matching your CounterStrikeSharp target (e.g. `net7.0` or `net8.0`, depending on your server setup)
-
+- **CS2 Server**
 ---
 
 ## Installation
