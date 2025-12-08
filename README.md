@@ -8,10 +8,11 @@ NadeMenu is a CounterStrikeSharp plugin for **CS2** that lets you:
 - Browse and manage your own lineups (“My lineups”).
 - Admin-manage all lineups on the server (edit/move/delete).
 - Optionally integrate with **MatchZy**-style `savednades.json`.
+- Optionally auto-equip / auto-give the correct grenade when teleporting to a lineup.
 
 Author: `gabeazar`  
 Plugin name: `NadeMenu`  
-Current plugin version: `1.1.0`
+Current plugin version: `1.2.1`
 
 ---
 
@@ -22,6 +23,7 @@ Current plugin version: `1.1.0`
 - **Save flow** that captures side, part, From/To, instructions, POS & ANG (`EyeAngles`).
 - **Filter & browse** by nade type, side, and map part, including “My lineups” views.
 - **Manage lineups**: rename/edit text, update position, delete (owner or admin).
+- **Auto-equip/give grenade on teleport** (configurable per lineup type & team).
 - **MatchZy-compatible JSON** with creator ownership & timestamps.
 
 ---
@@ -63,14 +65,21 @@ Current plugin version: `1.1.0`
 
 **Default config (example):**
 
-    {
-      "Version": 1,
-      "UseMatchZy": true,
-      "RegisterNadeAlias": true,
-      "PrimaryPageSize": 4
-    }
+```json
+{
+  "Version": 2,
+  "UseMatchZy": true,
+  "RegisterNadeAlias": true,
+  "PrimaryPageSize": 4,
+  "AutoEquipSavedGrenade": true,
+  "GiveMissingGrenade": true
+}
+```
 
 **Options:**
+
+- `Version` (int, default: 2)  
+  - Internal config version used by the plugin; you normally should not change this.
 
 - `UseMatchZy` (bool, default: true)  
   - `true` → Use MatchZy-style path:  
@@ -84,6 +93,14 @@ Current plugin version: `1.1.0`
 
 - `PrimaryPageSize` (int, default: 4)  
   - Number of primary menu items per page (e.g. 4 options + Prev/Next/Close).
+
+- `AutoEquipSavedGrenade` (bool, default: true)  
+  - When teleporting to a lineup, automatically switches to the grenade type saved with that lineup (Smoke/Flash/Molly/HE) if you have it in your inventory.
+
+- `GiveMissingGrenade` (bool, default: true)  
+  - Only used when `AutoEquipSavedGrenade` is `true`.  
+  - `true` → If you don’t have the saved grenade type, NadeMenu gives you that grenade and then auto-equips it.  
+  - `false` → If you don’t have the grenade, NadeMenu does not give or equip anything (teleport only).
 
 ---
 
@@ -101,7 +118,9 @@ Current plugin version: `1.1.0`
 
 When you join the server, NadeMenu prints a one-liner you can paste into your console, for example:
 
-    bind 1 "slot1; css_1"; bind 2 "slot2; css_2"; ...; bind 0 "slot10; css_0"
+```cfg
+bind 1 "slot1; css_1"; bind 2 "slot2; css_2"; bind 3 "slot3; css_3"; bind 4 "slot4; css_4"; bind 5 "slot5; css_5"; bind 6 "slot6; css_6"; bind 7 "slot7; css_7"; bind 8 "slot8; css_8"; bind 9 "slot9; css_9"; bind 0 "slot10; css_0"
+```
 
 This lets you control the menu via your number keys:
 
@@ -203,11 +222,15 @@ Each lineup stores:
 
 The lineup ID is built as:
 
-    <side>_<part>_<to>_from_<from>
+```text
+<side>_<part>_<to>_from_<from>
+```
 
 For example:
 
-    ct_a_xbox_from_tspawn
+```text
+ct_a_xbox_from_tspawn
+```
 
 POS and ANG are parsed into `Vector` + `QAngle` and reused exactly when teleporting, so your aim is identical every time.
 
@@ -223,12 +246,17 @@ You can browse lineups through:
 
 Each list entry shows the lineup ID, for example:
 
-    ct_a_xbox_from_tspawn
+```text
+ct_a_xbox_from_tspawn
+```
 
 Selecting a lineup will:
 
 - Teleport you to the saved **position**.
 - Set your view to the saved **angles**.
+- Optionally **auto-equip the correct grenade** (and give it if missing), depending on your config:
+  - If `AutoEquipSavedGrenade = true` and you already have that grenade, NadeMenu sends a `use weapon_x` command so it’s in your hand immediately.
+  - If `AutoEquipSavedGrenade = true` and `GiveMissingGrenade = true`, NadeMenu gives you the grenade first, then equips it.
 - Print the **instructions/description** in chat.
 
 After teleporting, NadeMenu reopens the browse list so you can quickly choose another lineup.
@@ -301,7 +329,9 @@ On confirm, NadeMenu:
 
 If `UseMatchZy = true`, NadeMenu reads and writes:
 
-    csgo/cfg/MatchZy/savednades.json
+```text
+csgo/cfg/MatchZy/savednades.json
+```
 
 It supports:
 
@@ -322,32 +352,36 @@ When saving or editing, NadeMenu:
 
 **Example single-entry structure (formatted for readability):**
 
-    {
-      "default": {
-        "ct_a_xbox_from_tspawn": {
-          "LineupPos": "123.00000 456.00000 789.00000",
-          "LineupAng": "10.00000 20.00000 0.00000",
-          "Desc": "Regular standing jumpthrow.",
-          "Map": "de_dust2",
-          "Type": "Smoke",
-          "CreatorSteamId": "7656119xxxxxxxxxx",
-          "CreatorName": "PlayerName",
-          "CreatedAtUtc": "2025-12-02T12:34:56Z",
-          "LastEditedAtUtc": "2025-12-02T12:34:56Z"
-        }
-      }
+```json
+{
+  "default": {
+    "ct_a_xbox_from_tspawn": {
+      "LineupPos": "123.00000 456.00000 789.00000",
+      "LineupAng": "10.00000 20.00000 0.00000",
+      "Desc": "Regular standing jumpthrow.",
+      "Map": "de_dust2",
+      "Type": "Smoke",
+      "CreatorSteamId": "7656119xxxxxxxxxx",
+      "CreatorName": "PlayerName",
+      "CreatedAtUtc": "2025-12-02T12:34:56Z",
+      "LastEditedAtUtc": "2025-12-02T12:34:56Z"
     }
+  }
+}
+```
 
 If `UseMatchZy = false`, the same structure is used in a plugin-local file:
 
-    addons/counterstrikesharp/plugins/NadeMenu/savednades.json
+```text
+addons/counterstrikesharp/plugins/NadeMenu/savednades.json
+```
 
 ---
 
 ## Troubleshooting
 
 - **Menu won’t close**  
-  Use key **0**, `!0` in chat, or press **ESC`. Menus also auto-close on death, round start, map change, and when moving to spectator.
+  Use key **0**, `!0` in chat, or press **ESC**. Menus also auto-close on death, disconnect, round start, map change, and when moving to spectator.
 
 - **Saved nades not appearing**  
   Ensure you are on the same map you saved them on. Check the `UseMatchZy` setting and that the JSON path is correct. Validate that `savednades.json` is valid JSON.
