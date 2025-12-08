@@ -229,7 +229,7 @@ The lineup ID is built as:
 For example:
 
 ```text
-ct_a_xbox_from_tspawn
+t_mid_xbox_from_tspawn
 ```
 
 POS and ANG are parsed into `Vector` + `QAngle` and reused exactly when teleporting, so your aim is identical every time.
@@ -247,7 +247,7 @@ You can browse lineups through:
 Each list entry shows the lineup ID, for example:
 
 ```text
-ct_a_xbox_from_tspawn
+t_mid_xbox_from_tspawn
 ```
 
 Selecting a lineup will:
@@ -355,7 +355,7 @@ When saving or editing, NadeMenu:
 ```json
 {
   "default": {
-    "ct_a_xbox_from_tspawn": {
+    "t_mid_xbox_from_tspawn": {
       "LineupPos": "123.00000 456.00000 789.00000",
       "LineupAng": "10.00000 20.00000 0.00000",
       "Desc": "Regular standing jumpthrow.",
