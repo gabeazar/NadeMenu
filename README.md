@@ -2,97 +2,60 @@
 
 NadeMenu is a CounterStrikeSharp plugin for **CS2** that lets you:
 
-- Browse nade lineups per map.
-
-- Filter lineups by **type**, **side**, and **map part**.
-
-- Save your own lineups directly in-game (position + view angle).
-
+- Browse nade lineups per map and filter them.
+- Save your own lineups directly in-game (position + aim).
 - Instantly **teleport** to any saved lineup to practice it.
-
+- Browse and manage your own lineups (“My lineups”).
+- Admin-manage all lineups on the server (edit/move/delete).
 - Optionally integrate with **MatchZy**-style `savednades.json`.
 
 Author: `gabeazar`  
-
-Plugin name: `NadeMenu`
+Plugin name: `NadeMenu`  
+Current plugin version: `1.1.0`
 
 ---
 
 ## Features
 
 - **Menu-based UI** using Center HTML menus.
-
-- **Navigation via number keys** with helper `css_0`–`css_9` commands.
-
-- **Save flow** that captures:
-
-  - Team side (CT/T)
-
-  - Map part (A/Mid/B)
-
-  - From/To short names
-
-  - Method/instructions text
-
-  - **Precise position (POS) and aim angle (ANG)** using `EyeAngles`
-
-- **Filter system**:
-
-  - By nade type: Smoke / Flash / Molly / HE / ALL
-
-  - By side: CT / T / Both
-
-  - By map part: A / Mid / B / All
-
-- **MatchZy compatibility**:
-
-  - Can read lineups from `csgo/cfg/MatchZy/savednades.json`.
-
-  - Also saves its own lineups into that file (or a local file) in a compatible structure.
+- **Number-key navigation** via helper `css_0`–`css_9` commands.
+- **Save flow** that captures side, part, From/To, instructions, POS & ANG (`EyeAngles`).
+- **Filter & browse** by nade type, side, and map part, including “My lineups” views.
+- **Manage lineups**: rename/edit text, update position, delete (owner or admin).
+- **MatchZy-compatible JSON** with creator ownership & timestamps.
 
 ---
 
 ## Requirements
 
-- **CounterStrikeSharp** (latest stable)
-
-- **A running CS2 server** (latest update)
+- **CounterStrikeSharp** (latest stable).
+- **CS2 dedicated server** (latest update).
 
 ---
 
 ## Installation
 
-1. **Place plugin**:
+1. **Place plugin**
 
-   - Place the `NadeMenu.dll` into:
+   Place `NadeMenu.dll` into:
 
-     ```
+       csgo/addons/counterstrikesharp/plugins/NadeMenu/
 
-     csgo/addons/counterstrikesharp/plugins/NadeMenu/
+   Example final path:
 
-     ```
+       csgo/addons/counterstrikesharp/plugins/NadeMenu/NadeMenu.dll
 
-   - Final path example:
+2. **Configuration file**
 
-     ```
+   On first run, CounterStrikeSharp will generate:
 
-     csgo/addons/counterstrikesharp/plugins/NadeMenu/NadeMenu.dll
+       csgo/addons/counterstrikesharp/configs/plugins/NadeMenu/NadeMenu.json
 
-     ```
+   Edit this file to change options (see **Configuration**).
 
-2. **Configuration file**:
+3. **Restart or reload**
 
-   - On first run, CounterStrikeSharp will generate:
-
-     ```
-
-     csgo/addons/counterstrikesharp/configs/plugins/NadeMenu/NadeMenu.json
-
-     ```
-
-   - Edit this file to change options (see **Configuration** below).
-
-3. **Restart the server** (or reload CounterStrikeSharp) for changes to apply.
+   Restart the server or reload CounterStrikeSharp for changes to apply.
 
 ---
 
@@ -100,39 +63,27 @@ Plugin name: `NadeMenu`
 
 **Default config (example):**
 
-```jsonc
-
-{
-
-  "Version": 1,
-
-  "UseMatchZy": true,
-
-  "RegisterNadeAlias": true,
-
-  "PrimaryPageSize": 4
-
-}
-
-```
+    {
+      "Version": 1,
+      "UseMatchZy": true,
+      "RegisterNadeAlias": true,
+      "PrimaryPageSize": 4
+    }
 
 **Options:**
 
-- `UseMatchZy` (bool, default: true):  
+- `UseMatchZy` (bool, default: true)  
+  - `true` → Use MatchZy-style path:  
+    `csgo/cfg/MatchZy/savednades.json`  
+  - `false` → Use plugin-local JSON:  
+    `addons/counterstrikesharp/plugins/NadeMenu/savednades.json`
 
-  true: Use MatchZy‑style path `csgo/cfg/MatchZy/savednades.json`  
+- `RegisterNadeAlias` (bool, default: true)  
+  - When `true`, both `nades` and `nade` (or `!nades` / `!nade` in chat) open the menu.  
+  - When `false`, only `nades` is registered.
 
-  false: Use plugin‑local JSON: `addons/counterstrikesharp/plugins/NadeMenu/savednades.json`
-
-- `RegisterNadeAlias` (bool, default: true):  
-
-  When true, both `!nades` and `!nade` commands open the menu.  
-
-  When false, only `!nades` is registered.
-
-- `PrimaryPageSize` (int, default: 4):  
-
-  Number of primary menu items per page (e.g. 4 options + Prev/Next/Close).
+- `PrimaryPageSize` (int, default: 4)  
+  - Number of primary menu items per page (e.g. 4 options + Prev/Next/Close).
 
 ---
 
@@ -140,148 +91,292 @@ Plugin name: `NadeMenu`
 
 ### Commands
 
-- `!nades`: Open the NadeMenu main menu.
+- `nades` – Open the NadeMenu main menu.  
+- `nade` – Same as `nades` (if `RegisterNadeAlias = true`).  
+- `nmadmin` – Open the admin manager directly (requires `@css/root`).
 
-- `!nade` (if `RegisterNadeAlias` = true): Same as `!nades`.
+> CounterStrikeSharp also exposes these as chat commands, so `!nades`, `!nade`, and `!nmadmin` work as expected.
 
 ### Recommended Keybinds
 
-When you join the server, you’ll see a chat message with a bind one‑liner to copy into your console.  
+When you join the server, NadeMenu prints a one-liner you can paste into your console, for example:
 
-It looks like this:  
+    bind 1 "slot1; css_1"; bind 2 "slot2; css_2"; ...; bind 0 "slot10; css_0"
 
-`bind 1 "slot1; css_1"; bind 2 "slot2; css_2"; ...; bind 0 "slot10; css_0"`
+This lets you control the menu via your number keys:
 
-This lets you control the menu with your number keys:
+- **1–4** – First four menu options.
+- **8** – Prev page / Back.
+- **9** – Next page (or Close if there is no next page).
+- **0** – Close menu.
 
-- 1–4 = first four menu options
+You can also use chat shortcuts while the menu is open:
 
-- 8 = Prev page / Back
+- `!1`, `!2`, `!3`, `!4` – Activate options 1–4 in the current menu.
+- `!8` – Prev.
+- `!9` – Next (or Close if no next page).
+- `!0` – Close.
 
-- 9 = Next page
+When NadeMenu is asking for text input (From/To/Instructions), anything you type in chat is **captured** and not shown to other players. You can optionally prefix it with `!` or `/` (for example, `!xbox` or `/jumpthrow`); NadeMenu strips those prefixes.
 
-- 0 = Close menu
+---
 
-You can also use chat shortcuts like:
+## Menu Flow
 
-- `!1`, `!2`, `!3`, `!4` – activate option 1–4 in the current menu
+### Main Menu
 
-- `!8` – Prev
+Opening `nades` / `!nades` shows the main menu:
 
-- `!9` – Next
+- **Browse all nades**  
+  Shows every saved lineup for the current map (no extra filters).
 
-- `!0` – Close  
+- **Filter / My lineups**  
+  Opens a sub-menu for filtered browsing and “My lineups” (see below).
 
-(Only while the menu is open.)
+- **Save new lineup**  
+  Starts the save flow (see **Saving a New Lineup**).
 
-![Join message with keybind instructions](https://raw.githubusercontent.com/gabeazar/NadeMenu/refs/heads/main/Screenshot%202025-12-02%20130300.png)
+- **Manage lineups (edit/remove)**  
+  Opens the management UI (My lineups, or All lineups for admins).
 
-### Menu Flow
+---
 
-#### Main Menu
+### Filter / My Lineups
 
-- Browse all nades: Shows every nade for the current map (no filters).
+From **Filter / My lineups** you get:
 
-- Filter nades: Step‑by‑step filter:  
+1. **Browse all nades**  
+   Quick path: show all lineups on the current map (no filters).
 
-  Nade Type (Smoke / Flash / Molly / HE / ALL)  
+2. **Filter by type/side/part**  
+   Step-by-step filter:
 
-  Side (CT / T / Both)  
+   - Nade Type: Smoke / Flash / Molly / HE / ALL  
+   - Side: CT / T / Both  
+   - Map Part: A / Mid / B / All  
 
-  Map Part (A / Mid / B / All)  
+   After choosing these, you see a filtered browse list.
 
-  Then shows the filtered list.
+3. **Browse my lineups**  
+   Shows only lineups **you created** on the current map (teleport-only browse).
 
-- Save new lineup: Starts the save flow (see below).
+Filtering only changes what is displayed; it does not modify or delete any lineups.
 
-![Preview of !nades main menu](https://raw.githubusercontent.com/gabeazar/NadeMenu/refs/heads/main/Screenshot%202025-12-02%20130327.png)
+---
 
-#### Saving a New Lineup
+## Saving a New Lineup
 
-1. Open the menu: `!nades`
+1. Open the menu: `!nades` (or `nades` in console).
+2. Choose **Save new lineup**.
+3. Select:
+   - **Side**: CT or T.
+   - **Map Part**: A / Mid / B.
+   - **Nade Type**:
+     - If you are holding a grenade, NadeMenu tries to auto-detect the type (Smoke/Flash/Molly/HE).
+     - Otherwise, you pick it manually.
 
-2. Choose “Save new lineup”.
+4. Provide **text inputs via chat** when prompted:
+   - **From** – Short name for your current position (e.g. `tspawn`, `long`, `coffins`).
+   - **To** – Short name for landing spot (e.g. `xbox`, `pit`, `coffins`).
+   - **Instructions** – How to throw it (e.g. `jumpthrow`, `walk 2 steps then throw`).
 
-3. Select:  
+   While NadeMenu is expecting these, your chat messages are captured and not printed. You can start them with `!` or `/` if you prefer.
 
-   - Side: CT or T  
+5. **Confirm**  
+   NadeMenu prints a summary in chat and shows a confirmation menu. Choose **Yes (save)** to finalize the lineup.
 
-   - Map Part: A / Mid / B  
+### What Is Saved
 
-   - Nade Type: If you hold a grenade, NadeMenu will auto‑detect type (Smoke/Flash/Molly/HE). Otherwise, pick it manually.
+Each lineup stores:
 
-4. Provide text inputs via chat:  
+- **POS** – Your exact world position (`AbsOrigin`) at save time.
+- **ANG** – Your exact view angles (`EyeAngles`) at save time.
+- **Map** – Map name (`de_dust2`, etc.).
+- **Type** – Nade type: Smoke / Flash / Molly / HE.
+- **Short names** – Side (CT/T), map part (A/Mid/B), From, and To.
+- **Instructions** – Free-text “how to throw” description.
+- **Ownership & timestamps**:
+  - `CreatorSteamId`
+  - `CreatorName`
+  - `CreatedAtUtc`
+  - `LastEditedAtUtc`
 
-   - From: Short name for your current position (e.g. tspawn, long, coffins)  
+The lineup ID is built as:
 
-   - To: Short name for landing spot (e.g. xbox, pit, coffins)  
+    <side>_<part>_<to>_from_<from>
 
-   - Instructions: How to throw it (e.g. jumpthrow, walk 2 steps then throw, etc.)
+For example:
 
-5. Confirm: NadeMenu prints a summary in chat. Confirm Yes (save) to save the lineup.
+    ct_a_xbox_from_tspawn
 
-#### What is Saved
+POS and ANG are parsed into `Vector` + `QAngle` and reused exactly when teleporting, so your aim is identical every time.
 
-For each lineup, NadeMenu saves:
+---
 
-- POS — your exact world position (`AbsOrigin`)
+## Browsing & Teleporting
 
-- ANG — your exact view angles at save time (`EyeAngles`)
+You can browse lineups through:
 
-- Map name
+- **Browse all nades** (no filters).
+- **Filter by type/side/part** (filtered list).
+- **Browse my lineups** (only your own).
 
-- Nade type
+Each list entry shows the lineup ID, for example:
 
-- Short names and instructions
+    ct_a_xbox_from_tspawn
 
-- An ID generated like: `<side>_<part>_<to>_from_<from>`  
+Selecting a lineup will:
 
-  Example: `ct_a_xbox_from_tspawn`
+- Teleport you to the saved **position**.
+- Set your view to the saved **angles**.
+- Print the **instructions/description** in chat.
 
-Both POS and ANG are then parsed into a `Vector` + `QAngle` pair and reused exactly when teleporting.
+After teleporting, NadeMenu reopens the browse list so you can quickly choose another lineup.
 
-#### Browsing & Previewing
+---
 
-- Use “Browse all nades” or “Filter nades” to see lineups for the current map.
+## Managing & Editing Lineups
 
-- Each menu entry is the nade ID (e.g. `ct_a_xbox_from_tspawn`).
+From the main menu, select **Manage lineups (edit/remove)**:
 
-- Selecting a lineup will:  
+- **My lineups (edit/remove)**  
+  Shows only lineups **you own** on the current map.
 
-  - Teleport you to the saved POS.  
+- **[Admin] All lineups**  
+  Shows **all** lineups on the current map. Only available if you have `@css/root`.
 
-  - Set your view to the saved ANG (same aim direction as when saved).  
+In the manage list, selecting a lineup opens **Manage • Lineup actions**:
 
-  - Print the description/instructions in chat.  
+- **Teleport to lineup**  
+  Teleport to this lineup’s POS/ANG (same behavior as browsing).
 
-- You can repeat this as many times as you want to practice the lineup.
+- **Rename / edit text**  
+  Change side, part, From, To, type (if needed), and instructions.
 
-### JSON / MatchZy Compatibility
+- **Update position from where I stand**  
+  Keep ID and text, but overwrite POS and ANG with your current position and aim.
 
-If `UseMatchZy` = true, NadeMenu reads and writes: `csgo/cfg/MatchZy/savednades.json`
+- **Delete lineup**  
+  Permanently delete the lineup after a confirmation step.
+
+When you open a lineup in manage mode, NadeMenu prints detailed info in chat:
+
+- ID and map.
+- Type, side, part, From, To.
+- Owner (creator name or SteamID).
+- Created time and last edited time.
+- Notes/description.
+
+### Rename / Edit Flow
+
+When you choose **Rename / edit text**:
+
+- NadeMenu pre-fills side, part, type, From, To, and instructions from the existing lineup.
+- You walk through:
+  - Side (CT/T).
+  - Map part (A/Mid/B).
+  - Nade type (if needed).
+  - New From, To, and Instructions via chat inputs.
+- A confirmation view shows:
+  - Old ID → New ID.
+  - New side/part/From/To/instructions.
+
+On confirm, NadeMenu:
+
+- Renames the lineup (changing the dictionary key if the ID changes).
+- Updates type and description.
+- Sets `LastEditedAtUtc` to now.
+
+### Permissions
+
+- **Edit / update position / delete** is allowed if:
+  - You are the **creator** (SteamID match), or
+  - You have **admin** permissions (`@css/root`).
+- **Teleporting** is allowed for all players, even if they are not the owner.
+- The admin manager (`[Admin] All lineups` and `nmadmin`) always requires `@css/root`.
+
+---
+
+## JSON / MatchZy Compatibility
+
+If `UseMatchZy = true`, NadeMenu reads and writes:
+
+    csgo/cfg/MatchZy/savednades.json
 
 It supports:
 
-- A "default" group containing id → NadeEntry mappings.
-
-- Per‑map groups (MatchZy style) where the group key is the map name.
+- A `"default"` group containing `id → NadeEntry` mappings.
+- Optional per-map groups (MatchZy style), where the group key is the map name.
 
 When loading, NadeMenu:
 
-- Flattens all groups.
+- Deserializes all groups in the JSON.
+- Uses `entry.Map` if present, otherwise falls back to the group key as the map name.
+- Only exposes lineups for the **current map**.
 
-- Uses either `entry.Map` or the group key as the map name.
+When saving or editing, NadeMenu:
 
-- Only lineups matching the current map are shown.
+- Ensures there is at least a `"default"` group.
+- Writes new and updated lineups into the `"default"` group.
+- Adds or updates ownership and timestamp metadata.
 
-When saving, NadeMenu always writes to the "default" group (safe and predictable).
+**Example single-entry structure (formatted for readability):**
+
+    {
+      "default": {
+        "ct_a_xbox_from_tspawn": {
+          "LineupPos": "123.00000 456.00000 789.00000",
+          "LineupAng": "10.00000 20.00000 0.00000",
+          "Desc": "Regular standing jumpthrow.",
+          "Map": "de_dust2",
+          "Type": "Smoke",
+          "CreatorSteamId": "7656119xxxxxxxxxx",
+          "CreatorName": "PlayerName",
+          "CreatedAtUtc": "2025-12-02T12:34:56Z",
+          "LastEditedAtUtc": "2025-12-02T12:34:56Z"
+        }
+      }
+    }
+
+If `UseMatchZy = false`, the same structure is used in a plugin-local file:
+
+    addons/counterstrikesharp/plugins/NadeMenu/savednades.json
+
+---
+
+## Auto-Close Behavior
+
+To avoid stale menus and edge cases, NadeMenu **force-closes** its UI and resets per-player state when:
+
+- A **map** starts or changes.
+- A **round** starts.
+- A player **disconnects**.
+- A player **dies**.
+- A player is moved to **Spectator** or **None**.
+- The player presses **ESC** (the `cancelselect` command).
+
+You can also manually close the menu via:
+
+- Number key **0** (or `!0` in chat).
+- Number key **9** when there is no further page (acts as Close).
+- The built-in “Close/Exit” option in the Center HTML menu.
 
 ---
 
 ## Troubleshooting
 
-- **Menu won’t close**: Use 0 (or `!0` in chat). On map change and round start, all menus are force‑closed by the plugin.
+- **Menu won’t close**  
+  Use key **0**, `!0` in chat, or press **ESC`. Menus also auto-close on death, round start, map change, and when moving to spectator.
 
-- **Saved nades not appearing**: Make sure you are on the same map you saved them on. Check `UseMatchZy` setting and correct JSON path. Verify the JSON at `savednades.json` is valid (no syntax errors).
+- **Saved nades not appearing**  
+  Ensure you are on the same map you saved them on. Check the `UseMatchZy` setting and that the JSON path is correct. Validate that `savednades.json` is valid JSON.
 
-- **Teleport is wrong angle**: Make sure you are using the latest version: NadeMenu now saves `EyeAngles`, not entity rotation. Re‑save the lineup; new saves will use your exact aim direction.
+- **Teleport is wrong angle**  
+  Make sure you’re running a version where NadeMenu saves `EyeAngles` (1.1.0+). Re-save the lineup; new saves will use your exact aim direction.
+
+- **Cannot edit/delete a lineup**  
+  Only the **creator** of a lineup or an admin with `@css/root` may edit or delete it. Teleporting remains available to everyone.
+
+---
+
+Enjoy practicing and organizing your CS2 nade lineups with NadeMenu!
