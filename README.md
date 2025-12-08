@@ -183,7 +183,7 @@ Filtering only changes what is displayed; it does not modify or delete any lineu
    While NadeMenu is expecting these, your chat messages are captured and not printed. You can start them with `!` or `/` if you prefer.
 
 5. **Confirm**  
-   NadeMenu prints a summary in chat and shows a confirmation menu. Choose **Yes (save)** to finalize the lineup.
+   NadeMenu prints a summary in chat and shows a confirmation menu. Choose **Yes (save)** to finalise the lineup.
 
 ### What Is Saved
 
@@ -310,7 +310,7 @@ It supports:
 
 When loading, NadeMenu:
 
-- Deserializes all groups in the JSON.
+- Deserialises all groups in the JSON.
 - Uses `entry.Map` if present, otherwise falls back to the group key as the map name.
 - Only exposes lineups for the **current map**.
 
@@ -344,25 +344,6 @@ If `UseMatchZy = false`, the same structure is used in a plugin-local file:
 
 ---
 
-## Auto-Close Behavior
-
-To avoid stale menus and edge cases, NadeMenu **force-closes** its UI and resets per-player state when:
-
-- A **map** starts or changes.
-- A **round** starts.
-- A player **disconnects**.
-- A player **dies**.
-- A player is moved to **Spectator** or **None**.
-- The player presses **ESC** (the `cancelselect` command).
-
-You can also manually close the menu via:
-
-- Number key **0** (or `!0` in chat).
-- Number key **9** when there is no further page (acts as Close).
-- The built-in “Close/Exit” option in the Center HTML menu.
-
----
-
 ## Troubleshooting
 
 - **Menu won’t close**  
@@ -379,4 +360,4 @@ You can also manually close the menu via:
 
 ---
 
-Enjoy practicing and organizing your CS2 nade lineups with NadeMenu!
+Enjoy practicing and organising your CS2 nade lineups with NadeMenu!
